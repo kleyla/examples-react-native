@@ -1,30 +1,74 @@
-import { StatusBar } from "expo-status-bar";
-import { Text, View } from "react-native";
+import { useState } from "react";
+import {
+  Button,
+  Dimensions,
+  RefreshControl,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
 import { styles } from "./src/styles";
+
+const width = Dimensions.get("window").width;
 
 export default function App() {
   return (
     <View style={styles.container}>
       <Text>Hola!</Text>
-      <MyPrimerComponente name={"Karen"} carrera={"sis"} />
-      <MyPrimerComponente name={"Diana"} />
-      <MyPrimerComponente name={"Jorge"} />
-      <Card>
-        <Text>Contenido hijo</Text>
-      </Card>
+      <MiFormulario />
     </View>
   );
 }
-// props
-const MyPrimerComponente = ({ name, carrera = "Redes" }) => {
+
+const MiFormulario = () => {
+  const [texto, settexto] = useState("");
+  const [lista, setlista] = useState([]);
+  const [isRefreshig, setisRefreshig] = useState(false);
+
+  console.log("exa", texto);
+
+  const miFuncion = () => {
+    console.log("miFuncion");
+    setlista([...lista, texto]);
+    settexto("");
+  };
+
+  const cargar = () => {
+    console.log("refresh");
+    setlista([]);
+  };
+
   return (
-    <View style={styles.misEstilos}>
-      <Text style={{ fontSize: 20, fontWeight: "bold" }}>Hola {name}!</Text>
-      <Text>Carrera {carrera} !</Text>
-    </View>
+    <ScrollView
+      refreshControl={
+        <RefreshControl refreshing={isRefreshig} onRefresh={cargar} />
+      }
+    >
+      <TextInput
+        value={texto}
+        onChangeText={settexto}
+        style={stylesForm.input}
+      />
+      <Button title="Evento" onPress={miFuncion} />
+      <View>
+        {lista.map((item, index) => (
+          <Text key={index}>{item}</Text>
+        ))}
+      </View>
+    </ScrollView>
   );
 };
 
-const Card = ({ children }) => {
-  return <View style={styles.card}>{children}</View>;
-};
+const stylesForm = StyleSheet.create({
+  input: {
+    // backgroundColor: "yellow",
+    padding: 12,
+    width: width - 40,
+    borderColor: "black",
+    borderWidth: 1,
+    fontSize: 30,
+    marginBottom: 20,
+  },
+});
